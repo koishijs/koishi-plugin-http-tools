@@ -1,5 +1,10 @@
 import { Context } from '@koishijs/client'
 import Page from './index.vue'
+import PrimeVue from 'primevue/config'
+import Tooltip from 'primevue/tooltip'
+// @ts-ignore
+import Aura from '@primevue/themes/aura'
+import 'primeicons/primeicons.css'
 
 export default (ctx: Context) => {
   // 此 Context 非彼 Context
@@ -9,4 +14,12 @@ export default (ctx: Context) => {
     path: '/http-tools',
     component: Page,
   })
+
+  ctx.app.use(PrimeVue, {
+    theme: {
+      preset: Aura,
+    },
+  })
+
+  ctx.app.directive('tooltip', Tooltip)
 }
