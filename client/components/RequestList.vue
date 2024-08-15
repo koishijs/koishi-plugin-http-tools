@@ -10,8 +10,9 @@ import ContextMenu from "primevue/contextmenu";
 
 import {computed,ref} from 'vue'
 import {getHttpMethodColor} from "./editors/http/colors";
+import CaptureListMenu from "./CaptureListMenu.vue";
 
-const model = defineModel<Record<string,any>>();
+const model = defineModel<any>();
 const props = defineProps<{
   requests?: {
     capture?:any[],
@@ -28,11 +29,12 @@ const menuModel = ([
 const listBoxOptions = computed(()=>([
   {
     label: '用户',
-    items: props.requests?.user ?? []
+    items: props.requests?.user.map(t=>({...t, type:'user'})) ?? []
   },
   {
     label: '捕获',
-    items: props.requests?.capture ?? []
+    items: props.requests?.capture.map(t=>({...t, type:'capture'})) ?? [],
+    menu: CaptureListMenu
   }
 ]))
 </script>
@@ -49,6 +51,7 @@ const listBoxOptions = computed(()=>([
       </InputGroup>
     </div>
     <ListBox
+      v-model="model"
       :options="listBoxOptions"
       optionGroupLabel="label"
       optionGroupChildren="items"
@@ -57,7 +60,13 @@ const listBoxOptions = computed(()=>([
       listStyle="height:calc(100% - 20px)"
     >
       <template #optiongroup="slotProps">
-        <div>{{ slotProps.option.label }} ({{slotProps.option?.items?.length ?? 0}})</div>
+        <div style="display: flex; flex-direction: row">
+          <div>{{ slotProps.option.label }} ({{slotProps.option?.items?.length ?? 0}})</div>
+          <div style="flex:1"></div>
+          <div v-if="slotProps.option.menu">
+            <component :is="slotProps.option.menu"></component>
+          </div>
+        </div>
       </template>
       <template #option="slotProps">
         <div @contextmenu="(e)=>menu.show(e)" style="width: 100%">
@@ -66,9 +75,17 @@ const listBoxOptions = computed(()=>([
               :value="slotProps.option.method?.toUpperCase()"
               :severity="getHttpMethodColor(slotProps.option.method)"
               style="font-size: 12px;padding:0.2rem 0.4rem"
-            ></Tag><div style="margin-left: 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">/api/login</div>
+            ></Tag>
+            <div style="margin-left: 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+              {{
+                (slotProps.option.path ?
+                  (slotProps.option.path.startsWith('/') ?
+                    slotProps.option.path : '/'+slotProps.option.path)
+                  : '[NO PATH]'
+                )
+              }}</div>
           </div>
-          <span style="font-size:12px">api.github.com | 200ms | 200 OK</span>
+          <span style="font-size:12px">{{ slotProps.option?.host ?? 'localhost' }}</span>
         </div>
       </template>
     </ListBox>

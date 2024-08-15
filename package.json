@@ -1,5 +1,5 @@
 {
-  "name": "koishi-plugin-http-tools",
+  "name": "cordis-plugin-http-tools",
   "version": "0.0.1",
   "description": "HTTP Tools for Koishi",
   "main": "lib/index.js",
@@ -33,7 +33,7 @@
     "network",
     "api"
   ],
-  "koishi": {
+  "cordis": {
     "service": {
       "required": [
         "http"
@@ -45,19 +45,24 @@
     "lint": "eslint --ext=ts --cache"
   },
   "devDependencies": {
+    "@cordisjs/client": "^0.1.12",
     "@cordisjs/eslint-config": "^1.1.1",
-    "@koishijs/client": "^5.11.0",
+    "@cordisjs/plugin-http": "^0.6.1",
+    "@primevue/themes": "^4.0.4",
     "@types/node": "^20.11.30",
     "atsc": "^2.0.1",
+    "cordis": "^3.17.9",
     "esbuild": "^0.18.20",
     "esbuild-register": "^3.5.0",
     "eslint": "^8.57.0",
-    "koishi": "^4.17.5",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.0.4",
     "typescript": "^5.4.3",
     "yml-register": "^1.2.5"
   },
   "peerDependencies": {
-    "@koishijs/plugin-console": "^5.11.0",
-    "koishi": "^4.17.5"
+    "@cordisjs/plugin-http": "^0.6.1",
+    "@cordisjs/plugin-webui": "^0.1.12",
+    "cordis": "^3.17.9"
   }
 }

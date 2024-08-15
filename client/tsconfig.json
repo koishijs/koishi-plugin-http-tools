@@ -2,10 +2,15 @@
   "compilerOptions": {
     "rootDir": ".",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "types": [
-      "@koishijs/client/global",
+      "@koishijs/client/global"
     ],
   },
-  "include": ["."],
+  "include": [".","../src"],
+  "references": [
+    {
+      "path": "../tsconfig.json",
+    },
+  ]
 }
