@@ -40,6 +40,10 @@ export namespace HttpApi{
       return await ctx['http/data'].saveRequest(deserializeBinary(request))
     })
 
+    ctx.webui.addListener('http/request.delete', async (requestInfo) => {
+      return await ctx['http/data'].deleteRequest(requestInfo)
+    })
+
     function serializeBinary(request: Request): Request {
       return {
         ...request,

@@ -2,6 +2,7 @@ import { RequestSummary } from './type'
 import { Context, Service } from 'cordis'
 import { Request } from './storage'
 import { Entry } from '@cordisjs/plugin-webui'
+import { remove } from 'cosmokit'
 
 export interface HttpSummary{
     user: RequestSummary[]
@@ -137,5 +138,25 @@ export class HttpDataService extends Service {
     summary.startTime = request.startTime
     this.entry?.refresh()
     return resp?.matched
+  }
+
+  async deleteRequest(requestInfo: {type: string; id: number}) {
+    if (requestInfo.type == 'user') {
+      const summary = this.userSummary.find((summary) => summary.id === requestInfo.id)
+      if (summary) {
+        remove(this.userSummary, summary)
+      }
+      await this.ctx.database.remove('requests', requestInfo.id)
+      this.entry?.refresh()
+    }
+    if (requestInfo.type == 'capture') {
+      const summary = this.capturedSummary.find((summary) => summary.id === requestInfo.id)
+      if (summary) {
+        remove(this.capturedSummary, summary)
+      }
+      const request = this.captured.find((request) => request.id === requestInfo.id)
+      remove(this.captured, request)
+      this.entry?.refresh()
+    }
   }
 }

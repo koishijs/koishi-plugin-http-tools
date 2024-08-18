@@ -10,7 +10,7 @@ import ContextMenu from "primevue/contextmenu";
 
 import {computed,ref} from 'vue'
 import {getHttpMethodColor} from "./editors/http/colors";
-import CaptureListMenu from "./CaptureListMenu.vue";
+import {send} from '@cordisjs/client'
 
 const model = defineModel<any>();
 const props = defineProps<{
@@ -22,11 +22,23 @@ const props = defineProps<{
 
 const menu = ref<{show:(event:any)=>void}>(null);
 const menuModel = ([
-  { label: 'Copy', icon: 'pi pi-copy' },
-  { label: 'Rename', icon: 'pi pi-file-edit' }
+  {
+    label: '删除',
+    icon: 'pi pi-trash',
+    command: ()=>{
+      send('http/request.delete', itemRightClicked.value)
+    }
+  },
 ]);
 
 const listBoxOptions = computed(()=>props.requests)
+
+const itemRightClicked = ref(null);
+
+function displayMenu(event, item){
+  itemRightClicked.value = item;
+  menu.value.show(event);
+}
 </script>
 
 <template>
@@ -60,7 +72,7 @@ const listBoxOptions = computed(()=>props.requests)
         </div>
       </template>
       <template #option="slotProps">
-        <div @contextmenu="(e)=>menu.show(e)" style="width: 100%">
+        <div @contextmenu="(e)=>displayMenu(e,{id:slotProps.option.id, type: slotProps.option.type})" style="width: 100%">
           <div style="display: flex; flex-direction: row;">
             <Tag
               :value="slotProps.option.method?.toUpperCase()"
