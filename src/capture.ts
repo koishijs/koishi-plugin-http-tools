@@ -57,6 +57,6 @@ export namespace HttpToolCaptureModule{
   }
 
   function encodeFormData(body: FormData): ArrayBuffer {
-    throw new Error('Not implemented')
+
   }
 }

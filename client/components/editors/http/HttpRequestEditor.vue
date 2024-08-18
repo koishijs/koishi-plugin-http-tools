@@ -31,6 +31,15 @@ function onRowEditSave(event){
     model.value.requestHeaders[event.newData.key] = event.newData.value;
   }
 }
+
+const requestBody = computed({
+  get(){
+    return model.value.requestBody ? atob(model.value.requestBody) : ""
+  },
+  set(v){
+    model.value.requestBody = btoa(v)
+  }
+})
 </script>
 
 <template>
@@ -72,7 +81,7 @@ function onRowEditSave(event){
         <div style="padding-bottom: 10px; font-size:18px">HTTP 请求体</div>
         <div style="flex:1"></div>
       </div>
-      <Textarea autoResize rows="10" cols="30" style="width: 100%" v-model="model.requestBody"/>
+      <Textarea autoResize rows="10" cols="30" style="width: 100%" v-model="requestBody"/>
     </div>
   </div>
 </template>

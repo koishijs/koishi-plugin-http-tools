@@ -33,17 +33,24 @@ export namespace HttpApi{
 
     ctx.webui.addListener('http/request.create', async (request) => {
       delete request['id']
-      return await ctx['http/data'].createRequest(request)
+      return await ctx['http/data'].createRequest(deserializeBinary(request))
     })
 
     ctx.webui.addListener('http/request.save', async (request) => {
-      return await ctx['http/data'].saveRequest(request)
+      return await ctx['http/data'].saveRequest(deserializeBinary(request))
     })
 
     function serializeBinary(request: Request): Request {
       return {
         ...request,
         requestBody: request.requestBody ? Buffer.from(request.requestBody as ArrayBuffer).toString('base64') : undefined,
+      }
+    }
+
+    function deserializeBinary(request: Request): Request {
+      return {
+        ...request,
+        requestBody: request.requestBody ? Buffer.from(request.requestBody as string, 'base64') as Buffer : undefined,
       }
     }
   }
