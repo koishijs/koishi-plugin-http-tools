@@ -31,6 +31,12 @@ export class HttpDataService extends Service {
 
   captured: Request[] = []
 
+  historySummary: RequestSummary[] = []
+
+  history: Request[] = []
+
+  historyMapper: Map<Request, Request> = new Map()
+
   initMap: WeakMap<RequestInit, Request> = new WeakMap()
 
   captureEnabled: boolean = true
@@ -47,6 +53,7 @@ export class HttpDataService extends Service {
     return {
       user: this.userSummary,
       capture: this.capturedSummary,
+      history: this.historySummary,
       captureEnabled: this.captureEnabled,
     }
   }
@@ -88,5 +95,47 @@ export class HttpDataService extends Service {
     if (type === 'user') {
       return (await this.ctx.database.get('requests', { id }))?.[0]
     }
+  }
+
+  async createRequest(request: Request) {
+    let url: URL | null = null
+    try {
+      url = new URL(request.url)
+    } catch (e) {}
+    request.host = url?.host ?? ''
+    request.path = url?.pathname ?? '/'
+    const resp = (await this.ctx.database.create('requests', request))
+    if (!resp) { return }
+    this.userSummary.push({
+      host: resp.host,
+      method: resp.method,
+      id: resp.id,
+      path: resp.path,
+      startTime: resp.startTime,
+    })
+    this.entry?.refresh()
+    return resp?.id
+  }
+
+  async saveRequest(request: Request) {
+    if (!request.id) { return }
+    let url: URL | null = null
+    try {
+      url = new URL(request.url)
+    } catch (e) {}
+    request.host = url?.host ?? ''
+    request.path = url?.pathname ?? '/'
+    const id = request.id
+    delete request['id']
+    const resp = (await this.ctx.database.set('requests', id, request))
+    if (!resp) { return }
+    const summary = this.userSummary.find((summary) => summary.id === id)
+    summary.host = request.host
+    summary.method = request.method
+    summary.id = id
+    summary.path = request.path
+    summary.startTime = request.startTime
+    this.entry?.refresh()
+    return resp?.matched
   }
 }

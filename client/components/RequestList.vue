@@ -26,17 +26,7 @@ const menuModel = ([
   { label: 'Rename', icon: 'pi pi-file-edit' }
 ]);
 
-const listBoxOptions = computed(()=>([
-  {
-    label: '用户',
-    items: props.requests?.user.map(t=>({...t, type:'user'})) ?? []
-  },
-  {
-    label: '捕获',
-    items: props.requests?.capture.map(t=>({...t, type:'capture'})) ?? [],
-    menu: CaptureListMenu
-  }
-]))
+const listBoxOptions = computed(()=>props.requests)
 </script>
 
 <template>
@@ -53,6 +43,7 @@ const listBoxOptions = computed(()=>([
     <ListBox
       v-model="model"
       :options="listBoxOptions"
+      dataKey="id"
       optionGroupLabel="label"
       optionGroupChildren="items"
       class="p-w-4 p-rb"
@@ -81,7 +72,7 @@ const listBoxOptions = computed(()=>([
                 (slotProps.option.path ?
                   (slotProps.option.path.startsWith('/') ?
                     slotProps.option.path : '/'+slotProps.option.path)
-                  : '[NO PATH]'
+                  : '/'
                 )
               }}</div>
           </div>

@@ -8,6 +8,8 @@ declare module '@cordisjs/plugin-webui' {
     'http/capture.stop'(): any
     'http/capture.clear'(): any
     'http/request'(param: {type: string; id: number}): Promise<Request | undefined>
+    'http/request.create'(request: Request): Promise<number | undefined>
+    'http/request.save'(request: Request): Promise<number | undefined>
   }
 }
 
@@ -25,8 +27,24 @@ export namespace HttpApi{
       ctx['http/data'].clearCapture()
     })
 
-    ctx.webui.addListener('http/request', (param) => {
-      return ctx['http/data'].getRequest(param.type, param.id)
+    ctx.webui.addListener('http/request', async (param) => {
+      return serializeBinary(await ctx['http/data'].getRequest(param.type, param.id))
     })
+
+    ctx.webui.addListener('http/request.create', async (request) => {
+      delete request['id']
+      return await ctx['http/data'].createRequest(request)
+    })
+
+    ctx.webui.addListener('http/request.save', async (request) => {
+      return await ctx['http/data'].saveRequest(request)
+    })
+
+    function serializeBinary(request: Request): Request {
+      return {
+        ...request,
+        requestBody: request.requestBody ? Buffer.from(request.requestBody as ArrayBuffer).toString('base64') : undefined,
+      }
+    }
   }
 }

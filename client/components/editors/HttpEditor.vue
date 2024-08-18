@@ -17,6 +17,8 @@ import Tag from "primevue/tag";
 
 const model = defineModel<any>();
 
+const identifier = defineModel<any>('identifier');
+
 const method = computed({
   get(){
     return model.value.method?.toUpperCase()
@@ -29,7 +31,7 @@ const method = computed({
 </script>
 
 <template>
-  <div style="display: flex;flex-direction: column;gap: 5px">
+  <div style="display: flex;flex-direction: column;gap: 5px;height:100%">
     <div style="padding: 8px 20px;">
       <InputGroup>
         <Select
@@ -63,18 +65,18 @@ const method = computed({
         Cache Miss
       </span>
     </div>
-    <Tabs value="0">
+    <Tabs value="0" style="flex:1">
       <TabList>
         <Tab value="0">请求</Tab>
         <Tab value="1">响应</Tab>
         <Tab value="2">选项</Tab>
       </TabList>
-      <TabPanels>
-        <TabPanel value="0">
-          <HttpRequestEditor/>
+      <TabPanels style="padding: 0;flex:1;">
+        <TabPanel value="0" style="padding: 1rem">
+          <HttpRequestEditor v-model="model"/>
         </TabPanel>
-        <TabPanel value="1">
-          <HttpResponsePreviewer/>
+        <TabPanel value="1" style="padding: 0;height:100%">
+          <HttpResponsePreviewer v-model:identifier="identifier"/>
         </TabPanel>
         <TabPanel value="2">
 

@@ -5,6 +5,7 @@ import {} from 'minato'
 export interface Request extends RequestSummary{
   url: string
   requestHeaders: Record<string, any>
+  requestBody: ArrayBuffer | string
 }
 
 declare module 'minato'{
@@ -18,8 +19,12 @@ export namespace HttpToolsStorage{
     ctx.database.extend('requests', {
       id: 'unsigned',
       method: 'string',
+      url: 'string',
       host: 'string',
       path: 'string',
+      requestHeaders: 'json',
+      requestBody: 'binary',
+      startTime: 'unsigned',
     }, {
       primary: 'id',
       autoInc: true,

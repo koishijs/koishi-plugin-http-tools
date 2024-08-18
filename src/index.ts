@@ -27,12 +27,11 @@ export function apply(ctx: Context) {
     ctx.plugin(HttpToolCaptureModule)
     ctx.inject(['http'], (ctx) => {
       let i = 0
-      ctx.setInterval(async () => {
-        try {
-          console.info(await ctx.http.get('https://www.timebather.cn/my-url-address' + (i++)))
-        } catch (e) {
-        }
-      }, 10000)
+      console.info(ctx.http.post('https://www.timebather.cn/my-url-address' + (i++), { p: 1 }, {
+        headers: {
+          'User-Agent': 'NodeJS',
+        },
+      }))
     })
   })
 }
