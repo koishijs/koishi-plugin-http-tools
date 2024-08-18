@@ -48,9 +48,6 @@ const requestBody = computed({
       <div style="display: flex; flex-direction: row;">
         <div style="padding-bottom: 10px; font-size:18px">HTTP 请求头</div>
         <div style="flex:1"></div>
-        <div>
-          <Button label="+" size="small"/>
-        </div>
       </div>
       <DataTable :value="headers" editMode="row" @row-edit-save="onRowEditSave"
                  :pt="{
