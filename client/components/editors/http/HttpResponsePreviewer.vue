@@ -3,7 +3,12 @@ import {ref,computed,watch} from "vue";
 import Menu from "primevue/menu";
 import {MenuItem} from "primevue/menuitem";
 import History from "./response/History.vue";
+import StackTrace from "./response/StackTrace.vue";
+import ResponseHeader from "./response/ResponseHeader.vue";
+import ScrollPanel from "primevue/scrollpanel";
+import ResponseBody from "./response/ResponseBody.vue";
 
+const model = defineModel();
 
 const identifier = defineModel<any>('identifier');
 
@@ -46,7 +51,7 @@ const items = computed(
 </script>
 
 <template>
-  <div class="flex" style="height: 100%">
+  <div class="flex" style="flex:1">
     <Menu :model="items" style="height: 100%; border-left: none;border-top:none;border-bottom: none;border-radius: 0">
       <template #item="{ item, props }">
         <a v-ripple class="flex items-center" v-bind="props.action">
@@ -56,8 +61,15 @@ const items = computed(
         </a>
       </template>
     </Menu>
-    <div class="flex-1">
-      <History v-if="current == 'history'"/>
+    <div class="flex-1 flex">
+      <div style="height: 100%;width: 100%">
+        <ScrollPanel style="height: 100%;width: 100%">
+          <ResponseHeader v-if="current == 'header'" v-model="model"/>
+          <ResponseBody v-if="current == 'body'" v-model="model"/>
+          <History v-if="current == 'history'"/>
+          <StackTrace v-else-if="current == 'stack'"/>
+        </ScrollPanel>
+      </div>
     </div>
   </div>
 </template>

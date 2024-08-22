@@ -51,11 +51,11 @@ watch(mode,(m)=>console.info(m));
 </script>
 
 <template>
-  <div style="display: flex;flex-direction: column;height:100%">
+  <div style="display: flex;flex-direction: column;flex: 1 1 0">
     <Toast />
     <MainMenu v-model:mode="mode" v-model="current" :unsaved="unsaved"/>
-    <div style="display: flex;flex-direction: row;height:100%">
-      <Splitter style="height: 100%;width: 100%">
+    <div style="display: flex;flex-direction: row;flex: 1 1 0;overflow: hidden;">
+      <Splitter style="flex: 1 1 0;width: 100%">
         <SplitterPanel :size="20" style="min-width: 300px">
           <RequestList :requests="mode == 'capture' ? capturedRequests : userRequests" v-model="current"/>
         </SplitterPanel>

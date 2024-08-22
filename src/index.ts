@@ -27,7 +27,7 @@ export function apply(ctx: Context) {
     ctx.plugin(HttpToolCaptureModule)
     ctx.inject(['http'], (ctx) => {
       let i = 0
-      console.info(ctx.http.post('https://www.timebather.cn/my-url-address' + (i++), { p: 1 }, {
+      console.info(ctx.http.get('https://www.baidu.com/', {
         headers: {
           'User-Agent': 'NodeJS',
         },

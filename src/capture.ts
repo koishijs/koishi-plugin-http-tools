@@ -7,7 +7,7 @@ export namespace HttpToolCaptureModule{
       if (!ctx['http/data'].captureEnabled) { return }
 
       const body = serializeBody(init)
-      ctx['http/data'].capture({
+      ctx['http/data'].capture(init, {
         method: init.method ?? 'GET',
         requestHeaders: config.headers ?? {},
         host: url.host,
@@ -16,6 +16,39 @@ export namespace HttpToolCaptureModule{
         url: url.toString(),
         requestBody: ('then' in body) ? null : body,
       })
+    })
+    ctx.on('http/after-fetch', (data) => {
+      const endTime = Date.now()
+      if (data.result) {
+        ctx['http/data'].fillCapture(data.init, {
+          responseCode: data.result.status,
+          responseStatus: data.result.statusText,
+          responseHeaders: Object.fromEntries((() => {
+            const h = []
+            data.result.headers.forEach((value, key) => h.push([key, value]))
+            return h
+          })()),
+          responseBody: null,
+          endTime,
+        })
+        data.result.clone().arrayBuffer().then((body) => {
+          ctx['http/data'].fillCapture(data.init, {
+            responseBody: body,
+          })
+        })
+      } else if (ctx.http.isError(data.error)) {
+        ctx['http/data'].fillCapture(data.init, {
+          responseCode: -1,
+          responseStatus: data.error.code,
+          endTime,
+        })
+      } else {
+        ctx['http/data'].fillCapture(data.init, {
+          responseCode: -1,
+          responseStatus: 'E_UNKNOWN',
+          endTime,
+        })
+      }
     })
   }
 
@@ -40,7 +73,7 @@ export namespace HttpToolCaptureModule{
       return requestInit.body.arrayBuffer()
     }
     if (requestInit.body instanceof FormData) {
-      return encodeFormData(requestInit.body)
+      return encodeFormData(requestInit.body)!
     }
     if (requestInit.body instanceof URLSearchParams) {
       return encodeTextToBuffer(requestInit.body.toString())
@@ -56,7 +89,7 @@ export namespace HttpToolCaptureModule{
     return textEncoder.encode(str)
   }
 
-  function encodeFormData(body: FormData): ArrayBuffer {
-
+  function encodeFormData(body: FormData): ArrayBuffer | null {
+    return null
   }
 }

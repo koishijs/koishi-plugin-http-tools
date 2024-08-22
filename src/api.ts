@@ -10,6 +10,7 @@ declare module '@cordisjs/plugin-webui' {
     'http/request'(param: {type: string; id: number}): Promise<Request | undefined>
     'http/request.create'(request: Request): Promise<number | undefined>
     'http/request.save'(request: Request): Promise<number | undefined>
+    'http/request.delete'(request: any): Promise<void>
   }
 }
 
@@ -48,6 +49,7 @@ export namespace HttpApi{
       return {
         ...request,
         requestBody: request.requestBody ? Buffer.from(request.requestBody as ArrayBuffer).toString('base64') : undefined,
+        responseBody: request.responseBody ? Buffer.from(request.responseBody as ArrayBuffer).toString('base64') : undefined,
       }
     }
 
@@ -55,6 +57,7 @@ export namespace HttpApi{
       return {
         ...request,
         requestBody: request.requestBody ? Buffer.from(request.requestBody as string, 'base64') as Buffer : undefined,
+        responseBody: request.responseBody ? Buffer.from(request.responseBody as string, 'base64') as Buffer : undefined,
       }
     }
   }

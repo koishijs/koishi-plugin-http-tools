@@ -6,6 +6,9 @@ export interface Request extends RequestSummary{
   url: string
   requestHeaders: Record<string, any>
   requestBody: ArrayBuffer | string
+  responseHeaders?: Record<string, any>
+  responseBody?: ArrayBuffer | string
+  endTime?: number
 }
 
 declare module 'minato'{
@@ -24,7 +27,12 @@ export namespace HttpToolsStorage{
       path: 'string',
       requestHeaders: 'json',
       requestBody: 'binary',
+      responseCode: 'integer',
+      responseStatus: 'string',
+      responseHeaders: 'json',
+      responseBody: 'binary',
       startTime: 'unsigned',
+      endTime: 'unsigned',
     }, {
       primary: 'id',
       autoInc: true,

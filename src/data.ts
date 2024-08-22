@@ -59,7 +59,7 @@ export class HttpDataService extends Service {
     }
   }
 
-  capture(request: Request) {
+  capture(init: object, request: Request) {
     request.id = this.idCounter++
     this.captured.unshift(request)
     const data = {
@@ -69,6 +69,7 @@ export class HttpDataService extends Service {
       path: request.path,
       startTime: request.startTime,
     }
+    this.initMap.set(init, request)
     this.capturedSummary.unshift(data)
     this.entry?.refresh()
   }
@@ -158,5 +159,12 @@ export class HttpDataService extends Service {
       remove(this.captured, request)
       this.entry?.refresh()
     }
+  }
+
+  fillCapture(init: object, request: Partial<Request>) {
+    const targetObject = this.initMap.get(init)
+    if (!targetObject) { return }
+    Object.assign(targetObject, request)
+    this.entry?.refresh()
   }
 }

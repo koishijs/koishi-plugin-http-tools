@@ -31,7 +31,7 @@ const method = computed({
 </script>
 
 <template>
-  <div style="display: flex;flex-direction: column;gap: 5px;height:100%">
+  <div style="display: flex;flex-direction: column;gap: 5px;overflow: hidden;height: 100%">
     <div style="padding: 8px 20px;">
       <InputGroup>
         <Select
@@ -65,18 +65,18 @@ const method = computed({
         Cache Miss
       </span>
     </div>
-    <Tabs value="0" style="flex:1">
+    <Tabs value="0" style="flex: 1 1 0;overflow: hidden;">
       <TabList>
         <Tab value="0">请求</Tab>
         <Tab value="1">响应</Tab>
         <Tab value="2">选项</Tab>
       </TabList>
-      <TabPanels style="padding: 0;flex:1;">
-        <TabPanel value="0" style="padding: 1rem">
+      <TabPanels style="padding: 0;flex:1;display: flex;overflow: hidden;width: 100%">
+        <TabPanel value="0" style="padding: 1rem;flex:1;width: 100%">
           <HttpRequestEditor v-model="model"/>
         </TabPanel>
-        <TabPanel value="1" style="padding: 0;height:100%">
-          <HttpResponsePreviewer v-model:identifier="identifier"/>
+        <TabPanel value="1" style="padding: 0;flex:1;display: flex;width: 100%">
+          <HttpResponsePreviewer v-model:identifier="identifier" v-model="model"/>
         </TabPanel>
         <TabPanel value="2">
 

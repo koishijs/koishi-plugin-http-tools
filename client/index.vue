@@ -23,5 +23,6 @@ import HttpTools from "./components/HttpTools.vue";
 <style>
 #app,body,html{
   height:100%;
+  overflow: hidden;
 }
 </style>

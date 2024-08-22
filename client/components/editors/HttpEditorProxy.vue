@@ -100,7 +100,7 @@
 
 <template>
   <HttpEditor v-if="data" v-model="data" v-model:identifier="model"/>
-  <div style="height:100%;width: 100%;display: flex;flex-direction: column" v-else>
+  <div style="flex:1;display: flex;flex-direction: column" v-else>
     <div style="display: flex;flex-direction: column;gap: 5px">
       <div style="padding: 8px 20px;">
         <Skeleton height="2.5rem" width="100%"></Skeleton>
