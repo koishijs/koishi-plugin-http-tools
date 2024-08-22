@@ -61,7 +61,7 @@
     "yml-register": "^1.2.5"
   },
   "peerDependencies": {
-    "@cordisjs/plugin-http": "^0.6.1",
+    "@cordisjs/plugin-http": "^0.6.2",
     "@cordisjs/plugin-webui": "^0.1.12",
     "cordis": "^3.17.9"
   }
