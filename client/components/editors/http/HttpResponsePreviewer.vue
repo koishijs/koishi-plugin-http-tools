@@ -7,6 +7,7 @@ import StackTrace from "./response/StackTrace.vue";
 import ResponseHeader from "./response/ResponseHeader.vue";
 import ScrollPanel from "primevue/scrollpanel";
 import ResponseBody from "./response/ResponseBody.vue";
+import Timing from "./response/Timing.vue";
 
 const model = defineModel();
 
@@ -65,9 +66,10 @@ const items = computed(
       <div style="height: 100%;width: 100%">
         <ScrollPanel style="height: 100%;width: 100%">
           <ResponseHeader v-if="current == 'header'" v-model="model"/>
-          <ResponseBody v-if="current == 'body'" v-model="model"/>
-          <History v-if="current == 'history'"/>
+          <ResponseBody v-else-if="current == 'body'" v-model="model"/>
+          <History v-else-if="current == 'history'"/>
           <StackTrace v-else-if="current == 'stack'"/>
+          <Timing v-else-if="current == 'timing'" v-model="model"/>
         </ScrollPanel>
       </div>
     </div>
