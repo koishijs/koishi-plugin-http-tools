@@ -6,8 +6,8 @@ const body = computed(()=>atob(model.value?.responseBody))
 </script>
 
 <template>
-  <div>
-    {{ body }}123
+  <div style="padding: 20px">
+    {{ body }}
   </div>
 </template>
 
