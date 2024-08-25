@@ -1,10 +1,11 @@
 import { Context } from 'cordis'
 import { HTTP } from '@cordisjs/plugin-http'
+import { Symbols } from './symbols'
 
 export namespace HttpToolCaptureModule{
   export function apply(ctx: Context) {
     ctx.on('http/fetch-init', (url: URL, init: RequestInit, config: HTTP.Config) => {
-      if (!ctx['http/data'].captureEnabled) { return }
+      if (!ctx['http/data'].captureEnabled && !(Symbols.request in config)) { return }
 
       const body = serializeBody(init)
       ctx['http/data'].capture(init, {
@@ -15,6 +16,7 @@ export namespace HttpToolCaptureModule{
         startTime: Date.now(),
         url: url.toString(),
         requestBody: ('then' in body) ? null : body,
+        originalRequest: config[Symbols.request],
       })
     })
     ctx.on('http/after-fetch', (data) => {

@@ -3,6 +3,7 @@ import { Context, Service } from 'cordis'
 import { Request } from './storage'
 import { Entry } from '@cordisjs/plugin-webui'
 import { remove } from 'cosmokit'
+import { Symbols } from './symbols'
 
 export interface HttpSummary{
     user: RequestSummary[]
@@ -46,7 +47,7 @@ export class HttpDataService extends Service {
 
   async loadSummary() {
     this.userSummary = await this.ctx.database.get('requests', {}, [
-      'id', 'method', 'path', 'host',
+      'id', 'method', 'path', 'host', 'originalRequest',
     ])
   }
 
@@ -68,6 +69,7 @@ export class HttpDataService extends Service {
       id: request.id,
       path: request.path,
       startTime: request.startTime,
+      originalRequest: request.originalRequest,
     }
     this.initMap.set(init, request)
     this.capturedSummary.unshift(data)
@@ -166,5 +168,22 @@ export class HttpDataService extends Service {
     if (!targetObject) { return }
     Object.assign(targetObject, request)
     this.entry?.refresh()
+  }
+
+  async doRequest(requestId: number) {
+    const request: Request = (await this.ctx.database.get('requests', requestId))?.[0]
+    if (!request) {
+      throw new Error('Not found')
+    }
+
+    try {
+      await this.ctx.http(request.url, {
+        methods: request.method,
+        data: request.requestBody,
+        headers: request.requestHeaders,
+        [Symbols.request]: requestId,
+      } as any)
+    } catch (e) {}
+    return 0
   }
 }

@@ -11,7 +11,7 @@ const capturedRequests = computed(()=>([
   {
     label: '捕获',
     type: 'capture',
-    items: model.value?.capture.map(t=>({...t, type:'capture'})) ?? [],
+    items: model.value?.capture.filter(t=>!t.originalRequest).map(t=>({...t, type:'capture'})) ?? [],
     menu: CaptureListMenu
   }
 ]))
@@ -23,8 +23,8 @@ const userRequests = computed(()=>([
   },
   {
     label: '历史',
-    type: 'history',
-    items: model.value?.history.map(t=>({...t, type:'user'})) ?? [],
+    type: 'capture',
+    items: model.value?.capture.filter(t=>t.originalRequest).map(t=>({...t, type:'capture'})) ?? [],
   }
 ]))
 import Toast from "primevue/toast";

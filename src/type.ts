@@ -9,4 +9,5 @@ export interface RequestSummary{
   timeCost?: number
 
   startTime?: number
+  originalRequest?: number
 }

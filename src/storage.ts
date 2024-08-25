@@ -33,6 +33,10 @@ export namespace HttpToolsStorage{
       responseBody: 'binary',
       startTime: 'unsigned',
       endTime: 'unsigned',
+      originalRequest: {
+        type: 'unsigned',
+        nullable: true,
+      },
     }, {
       primary: 'id',
       autoInc: true,

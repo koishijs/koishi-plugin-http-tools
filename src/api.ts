@@ -11,6 +11,7 @@ declare module '@cordisjs/plugin-webui' {
     'http/request.create'(request: Request): Promise<number | undefined>
     'http/request.save'(request: Request): Promise<number | undefined>
     'http/request.delete'(request: any): Promise<void>
+    'http/request.make'(param: {requestId: number}): Promise<number|string>
   }
 }
 
@@ -43,6 +44,10 @@ export namespace HttpApi{
 
     ctx.webui.addListener('http/request.delete', async (requestInfo) => {
       return await ctx['http/data'].deleteRequest(requestInfo)
+    })
+
+    ctx.webui.addListener('http/request.make', async (param) => {
+      return await ctx['http/data'].doRequest(param.requestId)
     })
 
     function serializeBinary(request: Request): Request {

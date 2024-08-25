@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {watch,ref,defineProps} from "vue"
-import {useRpc} from "@cordisjs/client";
+import {send} from "@cordisjs/client";
 
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
@@ -15,7 +15,7 @@ const props = defineProps<{
   unsaved: boolean
 }>();
 
-const model = defineModel();
+const model = defineModel<any>();
 
 const mode = defineModel<string>('mode');
 
@@ -26,6 +26,11 @@ watch(mode, (value)=>{
 },{immediate:true})
 
 const pop = ref<any>()
+
+
+async function sendRequest(){
+  await send('http/request.make', {requestId: model.value.id})
+}
 </script>
 <template>
 
@@ -46,7 +51,7 @@ const pop = ref<any>()
 
     <template #end>
       <template v-if="model">
-        <Button label="发送" size="large" v-if="!props.unsaved"></Button>
+        <Button label="发送" size="large" v-if="!props.unsaved && mode != 'capture'" @click="sendRequest"></Button>
         <Button label="保存" size="large" v-else></Button>
       </template>
       <span v-else style="height:2.75rem;width: 4rem"></span>
