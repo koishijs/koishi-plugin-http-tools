@@ -5,13 +5,17 @@ import ColumnGroup from 'primevue/columngroup';
 import Row from 'primevue/row';
 import {ref,watch} from 'vue'
 
-const currentHistory = ref()
+const currentHistory = defineModel('response');
 const requests = ref([
   {id:'test',time:'2024/8/16 21:34',url:'https://www.timebather.cn/api/test', method:'GET', requestSize: '20k', response:'200 OK', size:'200K'},
   {id:'test2',time:'2024/8/16 21:34',url:'https://www.timebather.cn/api/test', method:'GET', requestSize: '20k', response:'200 OK', size:'200K'}
 ])
 
-watch(currentHistory,(c)=>console.info(c))
+watch([currentHistory, requests],([history,_])=>{
+  if(history == null){
+    currentHistory.value = requests.value?.[0]
+  }
+},{immediate:true})
 </script>
 
 <template>

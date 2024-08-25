@@ -2,12 +2,12 @@
 import {computed} from 'vue'
 const model = defineModel<any>()
 
-const body = computed(()=>atob(model.value?.responseBody))
+const body = computed(()=>atob(model.value?.responseBody ?? ''))
 </script>
 
 <template>
   <div style="padding: 20px">
-    {{ body }}
+    <pre>{{ body }}</pre>
   </div>
 </template>
 
