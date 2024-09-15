@@ -53,16 +53,16 @@ export namespace HttpApi{
     function serializeBinary(request: Request): Request {
       return {
         ...request,
-        requestBody: request.requestBody ? Buffer.from(request.requestBody as ArrayBuffer).toString('base64') : undefined,
-        responseBody: request.responseBody ? Buffer.from(request.responseBody as ArrayBuffer).toString('base64') : undefined,
+        requestBody: request?.requestBody ? Buffer.from(request.requestBody as ArrayBuffer).toString('base64') : undefined,
+        responseBody: request?.responseBody ? Buffer.from(request.responseBody as ArrayBuffer).toString('base64') : undefined,
       }
     }
 
     function deserializeBinary(request: Request): Request {
       return {
         ...request,
-        requestBody: request.requestBody ? Buffer.from(request.requestBody as string, 'base64') as Buffer : undefined,
-        responseBody: request.responseBody ? Buffer.from(request.responseBody as string, 'base64') as Buffer : undefined,
+        requestBody: request?.requestBody ? Buffer.from(request.requestBody as string, 'base64') as Buffer : undefined,
+        responseBody: request?.responseBody ? Buffer.from(request.responseBody as string, 'base64') as Buffer : undefined,
       }
     }
   }

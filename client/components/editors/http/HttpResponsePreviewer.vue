@@ -13,16 +13,19 @@ const model = defineModel();
 
 const identifier = defineModel<any>('identifier');
 
-const current = ref(identifier.value.type != 'capture' ? "history" : 'header');
+const isUser = computed(()=>identifier.value.type != 'capture' || identifier.value.originalRequest);
 
+const current = ref(isUser.value ? "history" : 'header');
+
+const hasChildren = ref(false);
 const menuData = computed(()=>(
   [
-    ...(identifier.value.type != 'capture' ? [{
+    ...(isUser.value ? [{
       label: '历史记录',
       icon: 'pi pi-history',
       name: 'history'
     }] : []),
-    {
+    ...(hasChildren.value ? [{
       label: '响应头',
       icon: 'pi pi-inbox',
       name: 'header'
@@ -42,8 +45,9 @@ const menuData = computed(()=>(
       icon: 'pi pi-align-justify',
       name: 'stack'
     }
-  ]
-));
+  ] : [])
+
+  ]));
 const items = computed(
   () => menuData.value.map(entry=>current.value == entry.name ? {...entry,class: 'k-h-active'} : {
     ...entry,
@@ -65,11 +69,11 @@ const items = computed(
     <div class="flex-1 flex">
       <div style="height: 100%;width: 100%">
         <ScrollPanel style="height: 100%;width: 100%">
-          <ResponseHeader v-if="current == 'header'" v-model="model"/>
-          <ResponseBody v-else-if="current == 'body'" v-model="model"/>
-          <History v-else-if="current == 'history'"/>
-          <StackTrace v-else-if="current == 'stack'"/>
-          <Timing v-else-if="current == 'timing'" v-model="model"/>
+          <ResponseHeader v-if="current == 'header' && hasChildren" v-model="model"/>
+          <ResponseBody v-else-if="current == 'body' && hasChildren" v-model="model"/>
+          <History v-else-if="current == 'history'" :identifier="identifier" :response="model" v-model:historySelected="hasChildren"/>
+          <StackTrace v-else-if="current == 'stack' && hasChildren"/>
+          <Timing v-else-if="current == 'timing' && hasChildren" v-model="model"/>
         </ScrollPanel>
       </div>
     </div>

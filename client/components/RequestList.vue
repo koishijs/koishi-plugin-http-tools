@@ -55,7 +55,7 @@ function displayMenu(event, item){
     <ListBox
       v-model="model"
       :options="listBoxOptions"
-      dataKey="id"
+      :dataKey="(o)=>o.type + '.' + o.id"
       optionGroupLabel="label"
       optionGroupChildren="items"
       class="p-w-4 p-rb"

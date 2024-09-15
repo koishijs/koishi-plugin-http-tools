@@ -48,6 +48,7 @@ const mode = ref();
 
 const unsaved = ref();
 watch(mode,(m)=>console.info(m));
+provide('request_list', model);
 </script>
 
 <template>

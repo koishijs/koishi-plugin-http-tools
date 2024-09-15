@@ -1,5 +1,5 @@
 export function getHttpMethodColor(method: string): string {
-  switch (method.toLowerCase()) {
+  switch (method?.toLowerCase()) {
     case 'get':
       return 'info'
     case 'post':

@@ -11,11 +11,15 @@ import InputGroupAddon from "primevue/inputgroupaddon";
 import HttpRequestEditor from "./http/HttpRequestEditor.vue";
 import HttpResponsePreviewer from "./http/HttpResponsePreviewer.vue";
 import InputText from "primevue/inputtext";
-import {computed, defineModel} from 'vue'
+import {computed, defineModel, ref, watch, inject} from 'vue'
 import {getHttpMethodColor} from "./http/colors";
 import Tag from "primevue/tag";
 
-const model = defineModel<any>();
+const model = defineModel<any>('request');
+
+const props = defineProps<{
+  response: any
+}>();
 
 const identifier = defineModel<any>('identifier');
 
@@ -28,6 +32,26 @@ const method = computed({
     model.value.method = value.toLowerCase();
   },
 })
+
+const tabs = ref("0");
+
+const update = inject<(s:any)=>void>('setRequestModel');
+
+watch(identifier, (identifier)=>{
+  if(identifier.originalRequest)
+    tabs.value = "1";
+  else
+    tabs.value = "0";
+},{immediate:true});
+
+watch(tabs, (value)=>{
+  if(value === "1" && !identifier.value.originalRequest){
+
+  }else if(value === "0" && identifier.value.originalRequest){
+    update({id:identifier.value.originalRequest, type:'user'})
+  }
+})
+
 </script>
 
 <template>
@@ -65,7 +89,7 @@ const method = computed({
         Cache Miss
       </span>
     </div>
-    <Tabs value="0" style="flex: 1 1 0;overflow: hidden;">
+    <Tabs style="flex: 1 1 0;overflow: hidden;" v-model:value="tabs">
       <TabList>
         <Tab value="0">请求</Tab>
         <Tab value="1">响应</Tab>
@@ -76,7 +100,7 @@ const method = computed({
           <HttpRequestEditor v-model="model"/>
         </TabPanel>
         <TabPanel value="1" style="padding: 0;flex:1;display: flex;width: 100%">
-          <HttpResponsePreviewer v-model:identifier="identifier" v-model="model"/>
+          <HttpResponsePreviewer v-model:identifier="identifier" v-model="props.response" v-if="tabs == '1'"/>
         </TabPanel>
         <TabPanel value="2">
 

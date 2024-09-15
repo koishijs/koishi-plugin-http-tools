@@ -1,16 +1,15 @@
 <script setup lang="ts">
-  import {ref,watch,nextTick,defineExpose,defineEmits} from 'vue'
-  import ProgressSpinner from "primevue/progressspinner";
-  import Skeleton from "primevue/skeleton";
-  import HttpEditor from "./HttpEditor.vue";
-  import {send} from '@cordisjs/client'
-  import {Field} from "minato";
-  import boolean = Field.boolean;
+import {nextTick, ref, watch, provide} from 'vue'
+import Skeleton from "primevue/skeleton";
+import HttpEditor from "./HttpEditor.vue";
+import {send} from '@cordisjs/client'
+import {Field} from "minato";
 
-  const model = defineModel<{
+const model = defineModel<{
     id: number,
     type: string,
-    stopRefresh?:boolean
+    stopRefresh?:boolean,
+    originalRequest?: number
   }>()
 
   const props = defineProps<{
@@ -25,25 +24,53 @@
   const changed = defineModel<boolean>('unsaved');
   const mode = defineModel<string>('mode');
 
-  async function fetchData(type:string, id:number){
-    const response = await send('http/request',{type, id});
-    if(response){
-      data.value = response;
+  const response_data = ref();
+
+  async function fetchData(type:string, id:number, originalRequest?: number){
+    const request = await send('http/request',{type, id: id});
+    response_data.value = null;
+    if(originalRequest){
+      data.value = await send('http/request', {type: 'user', id:originalRequest});
+    }else data.value = null;
+    if(request){
+      if(!data.value)
+        data.value = request;
+      else
+        response_data.value = request;
       nextTick(()=>{
         changed.value = false;
       });
     }
   }
 
-  watch(model,(val)=>{
+  watch(model,(val, oldVal)=>{
+
+
+    if(val?.type == oldVal?.type && val?.id == oldVal?.id){
+      return;
+    }
+
     if(val.stopRefresh){
       val.stopRefresh = false;
       return;
     }
-    data.value = null;
+
     if(!val)
       return;
-    fetchData(val.type, val.id);
+
+    const realRequestId = val.originalRequest ?? val.id;
+    const realRequestType = val.originalRequest ? 'user' : val.type;
+
+    const oldRequestId = oldVal?.originalRequest ?? oldVal?.id;
+    const oldRequestType = oldVal?.originalRequest ? 'user' : oldVal?.type;
+
+    /* if(realRequestId == oldRequestId && realRequestType == oldRequestType){
+      return;
+    } */
+
+    data.value = null;
+
+    fetchData(val.type, val.id, val.originalRequest);
   },{immediate:true})
 
   watch(data,()=>{
@@ -52,7 +79,7 @@
 
   watch(props,(props)=>{
     const request = props.requests;
-    console.info("Request update")
+    // console.info("Request update")
     const category = request.find(category=>category.type == model.value.type);
     if(!category){
       model.value = null;
@@ -82,24 +109,33 @@
   })
 
   async function save(){
-    if(model.value.type != 'user'){
+    if(!data.value)
+      return;
+    if(model.value.type != 'user' && !model.value.originalRequest){
       const request = await send('http/request.create', data.value);
       if(!request){
         alert("保存失败!");
         changed.value = true;
       }else{
         mode.value = 'test';
-        model.value = { id:request, type: 'user', stopRefresh:true};
+        model.value = { id:request, type: 'user' };
       }
     } else {
-      const request = await send('http/request.save', data.value);
-
+      const request = await send('http/request.save', {
+        ...data.value,
+        ...(model.value.originalRequest ? {
+          id: model.value.originalRequest
+        } : {})
+      });
     }
   }
+  provide('setRequestModel', (request:{id:number, type:string})=>{
+    model.value = request;
+  })
 </script>
 
 <template>
-  <HttpEditor v-if="data" v-model="data" v-model:identifier="model"/>
+  <HttpEditor v-if="data" v-model:request="data" :response="response_data ?? data" v-model:identifier="model"/>
   <div style="flex:1;display: flex;flex-direction: column" v-else>
     <div style="display: flex;flex-direction: column;gap: 5px">
       <div style="padding: 8px 20px;">
