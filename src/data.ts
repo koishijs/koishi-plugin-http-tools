@@ -145,7 +145,7 @@ export class HttpDataService extends Service {
   }
 
   async deleteRequest(requestInfo: {type: string; id: number}) {
-    if (requestInfo.type == 'user') {
+    if (requestInfo.type === 'user') {
       const summary = this.userSummary.find((summary) => summary.id === requestInfo.id)
       if (summary) {
         remove(this.userSummary, summary)
@@ -153,7 +153,7 @@ export class HttpDataService extends Service {
       await this.ctx.database.remove('requests', requestInfo.id)
       this.entry?.refresh()
     }
-    if (requestInfo.type == 'capture') {
+    if (requestInfo.type === 'capture') {
       const summary = this.capturedSummary.find((summary) => summary.id === requestInfo.id)
       if (summary) {
         remove(this.capturedSummary, summary)
@@ -186,11 +186,5 @@ export class HttpDataService extends Service {
       } as any)
     } catch (e) {}
     return 0
-  }
-
-  updatePluginStat(context: Context, method: string) {
-    console.info(context.runtime.name);
-    const pluginIds = this.ctx.loader.locate(this.ctx)
-    console.info("PluginStat", pluginIds)
   }
 }
