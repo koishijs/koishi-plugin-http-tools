@@ -1,4 +1,13 @@
 [
+  "Authentication",
+  "Accept",
+  "Accept-Language",
+  "Accept-Encoding",
   "User-Agent",
-  "Authentication"
+  "Connection",
+  "Upgrade-Insecure-Requests",
+  "Referer",
+  "Cache-Control",
+  "Cookie",
+  "Range"
 ]
