@@ -76,19 +76,6 @@ watch(tabs, (value)=>{
         <InputText placeholder="URL" size="large" v-model="model.url"/>
       </InputGroup>
     </div>
-    <div style="padding-left: 20px">
-      <span style="color:lawngreen">
-        HTTP/1.1 200 OK
-      </span>
-      <span class="text-splitter"></span>
-      <span>
-        200ms
-      </span>
-      <span class="text-splitter"></span>
-      <span style="color:red">
-        Cache Miss
-      </span>
-    </div>
     <Tabs style="flex: 1 1 0;overflow: hidden;" v-model:value="tabs">
       <TabList>
         <Tab value="0">请求</Tab>

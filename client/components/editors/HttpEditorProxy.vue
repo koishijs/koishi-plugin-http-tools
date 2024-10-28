@@ -132,6 +132,12 @@ const model = defineModel<{
   provide('setRequestModel', (request:{id:number, type:string})=>{
     model.value = request;
   })
+
+  defineExpose({
+    save(){
+      return save();
+    }
+  })
 </script>
 
 <template>

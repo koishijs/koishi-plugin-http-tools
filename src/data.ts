@@ -4,6 +4,7 @@ import { Request } from './storage'
 import { Entry } from '@cordisjs/plugin-webui'
 import { remove } from 'cosmokit'
 import { Symbols } from './symbols'
+import {} from '@cordisjs/loader'
 
 export interface HttpSummary{
     user: RequestSummary[]
@@ -178,12 +179,18 @@ export class HttpDataService extends Service {
 
     try {
       await this.ctx.http(request.url, {
-        methods: request.method,
+        method: request.method,
         data: request.requestBody,
         headers: request.requestHeaders,
         [Symbols.request]: requestId,
       } as any)
     } catch (e) {}
     return 0
+  }
+
+  updatePluginStat(context: Context, method: string) {
+    console.info(context.runtime.name);
+    const pluginIds = this.ctx.loader.locate(this.ctx)
+    console.info("PluginStat", pluginIds)
   }
 }

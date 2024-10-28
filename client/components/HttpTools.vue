@@ -45,6 +45,7 @@ provide('toast',(severity:"success" | "info" | "warn" | "error" | "secondary" | 
 const current = ref();
 const currentModel = ref();
 const mode = ref();
+const proxyHandler = ref();
 
 const unsaved = ref();
 watch(mode,(m)=>console.info(m));
@@ -54,7 +55,7 @@ provide('request_list', model);
 <template>
   <div style="display: flex;flex-direction: column;flex: 1 1 0">
     <Toast />
-    <MainMenu v-model:mode="mode" v-model="current" :unsaved="unsaved"/>
+    <MainMenu v-model:mode="mode" v-model="current" :unsaved="unsaved" @save="()=>proxyHandler.save()"/>
     <div style="display: flex;flex-direction: row;flex: 1 1 0;overflow: hidden;">
       <Splitter style="flex: 1 1 0;width: 100%">
         <SplitterPanel :size="20" style="min-width: 300px">
@@ -67,6 +68,7 @@ provide('request_list', model);
             v-model:mode="mode"
             :requests="mode == 'capture' ? capturedRequests : userRequests"
             v-model:unsaved="unsaved"
+            ref="proxyHandler"
           />
         </SplitterPanel>
       </Splitter>

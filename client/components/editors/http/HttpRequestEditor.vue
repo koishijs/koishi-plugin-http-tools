@@ -5,6 +5,8 @@ import Column from "primevue/column";
 import Button from "primevue/button";
 import Textarea from "primevue/textarea";
 import InputText from "primevue/inputtext";
+import AutoComplete from "primevue/autocomplete";
+import CommonHeaders from "./headers.json";
 
 const model = defineModel<any>();
 
@@ -40,6 +42,13 @@ const requestBody = computed({
     model.value.requestBody = btoa(v)
   }
 })
+
+const searchHeaderResult = ref();
+
+function searchHeaders(event:{query:string}){
+  const query = event.query.toLowerCase();
+  searchHeaderResult.value = CommonHeaders.filter(t=>t.toLowerCase().includes(query))
+}
 </script>
 
 <template>
@@ -59,10 +68,9 @@ const requestBody = computed({
         }
     }" v-model:editingRows="editingRows"
       >
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
         <Column header="Key" field="key" headerStyle="width: 20rem">
           <template #editor="{ data, field }">
-            <InputText v-model="data[field]" fluid />
+            <AutoComplete v-model="data[field]" fluid :suggestions="searchHeaderResult" @complete="searchHeaders"/>
           </template>
         </Column>
         <Column header="Value" field="value" headerStyle="width: 20rem">
@@ -70,7 +78,13 @@ const requestBody = computed({
             <InputText v-model="data[field]" fluid />
           </template>
         </Column>
-        <Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center"></Column>
+        <Column :rowEditor="true" style="width: 1rem;" bodyStyle="text-align:center"></Column>
+
+        <Column field="delete" header="" style="width: 1rem;">
+          <template #body="{data}">
+            <Button v-if="data['key']" icon="pi pi-trash" severity="danger" text rounded aria-label="Remove" @click="()=>delete model.requestHeaders[data['key']]"/>
+          </template>
+        </Column>
       </DataTable>
     </div>
     <div>

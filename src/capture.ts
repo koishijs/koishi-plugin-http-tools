@@ -4,9 +4,10 @@ import { Symbols } from './symbols'
 
 export namespace HttpToolCaptureModule{
   export function apply(ctx: Context) {
-    ctx.on('http/fetch-init', (url: URL, init: RequestInit, config: HTTP.Config) => {
+    ctx.on('http/fetch-init', function (this: HTTP, url: URL, init: RequestInit, config: HTTP.Config) {
+      ctx['http/data'].updatePluginStat(this.ctx, init.method)
       if (!ctx['http/data'].captureEnabled && !(Symbols.request in config)) { return }
-
+      const stackTrace = new Error()
       const body = serializeBody(init)
       ctx['http/data'].capture(init, {
         method: init.method ?? 'GET',
@@ -17,6 +18,7 @@ export namespace HttpToolCaptureModule{
         url: url.toString(),
         requestBody: ('then' in body) ? null : body,
         originalRequest: config[Symbols.request],
+        stackTrace: stackTrace.stack,
       })
     })
     ctx.on('http/after-fetch', (data) => {

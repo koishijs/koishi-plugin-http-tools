@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {watch,ref,defineProps} from "vue"
+import {watch,ref,defineProps, defineEmits} from "vue"
 import {send} from "@cordisjs/client";
 
 import Toolbar from "primevue/toolbar";
@@ -18,6 +18,8 @@ const props = defineProps<{
 const model = defineModel<any>();
 
 const mode = defineModel<string>('mode');
+
+const emit = defineEmits(['save']);
 
 watch(mode, (value)=>{
   if(value != 'capture' && value != 'test'){
@@ -52,7 +54,7 @@ async function sendRequest(){
     <template #end>
       <template v-if="model">
         <Button label="发送" size="large" v-if="!props.unsaved && mode != 'capture'" @click="sendRequest"></Button>
-        <Button label="保存" size="large" v-else></Button>
+        <Button label="保存" size="large" v-else @click="emit('save')"></Button>
       </template>
       <span v-else style="height:2.75rem;width: 4rem"></span>
     </template>
