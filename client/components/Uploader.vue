@@ -69,10 +69,6 @@ function uploadAll(files:File[]){
     })
   })
 }
-
-watch([files], (t)=>{
-  console.info("Files",files);
-})
 </script>
 
 <template>

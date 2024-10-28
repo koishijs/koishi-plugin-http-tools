@@ -79,7 +79,6 @@ const model = defineModel<{
 
   watch(props,(props)=>{
     const request = props.requests;
-    // console.info("Request update")
     const category = request.find(category=>category.type == model.value.type);
     if(!category){
       model.value = null;

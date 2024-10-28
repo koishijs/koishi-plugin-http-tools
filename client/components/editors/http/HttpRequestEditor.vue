@@ -19,8 +19,6 @@ const headers = computed(()=>[
 
 const editingRows = ref([])
 
-console.info(headers)
-
 function onRowEditSave(event){
   if(!model.value)
     return

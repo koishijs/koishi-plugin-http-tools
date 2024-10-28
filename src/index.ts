@@ -25,13 +25,5 @@ export function apply(ctx: Context) {
   ctx.inject(['http/data'], (ctx) => {
     ctx.plugin(HttpApi)
     ctx.plugin(HttpToolCaptureModule)
-    ctx.inject(['http'], (ctx) => {
-      let i = 0
-      console.info(ctx.http.get('https://www.baidu.com/', {
-        headers: {
-          'User-Agent': 'NodeJS',
-        },
-      }))
-    })
   })
 }

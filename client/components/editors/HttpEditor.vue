@@ -28,7 +28,6 @@ const method = computed({
     return model.value.method?.toUpperCase()
   },
   set(value){
-    console.info("UPD",model.value.method, value.toLowerCase())
     model.value.method = value.toLowerCase();
   },
 })
