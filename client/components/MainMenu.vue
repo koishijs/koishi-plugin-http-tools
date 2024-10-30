@@ -33,12 +33,23 @@ const pop = ref<any>()
 async function sendRequest(){
   await send('http/request.make', {requestId: model.value.id})
 }
+
+function createRequest(){
+  send('http/request.create', {
+    host:"",
+    method:"GET",
+    url:"",
+    path:"",
+    requestHeaders:{},
+    requestBody:""
+  });
+}
 </script>
 <template>
 
   <Toolbar>
     <template #start>
-      <Button icon="pi pi-plus" class="mr-2" severity="secondary" text v-tooltip.bottom="'创建 HTTP 请求'"/>
+      <Button icon="pi pi-plus" class="mr-2" severity="secondary" text v-tooltip.bottom="'创建 HTTP 请求'" @click="createRequest"/>
       <Button icon="pi pi-upload" severity="secondary" text v-tooltip.bottom="'上传已有 HTTP 请求'" @click="(e)=>pop.toggle(e)"/>
       <Popover ref="pop" style="padding: 0">
         <Uploader/>

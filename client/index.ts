@@ -7,6 +7,7 @@ import Tooltip from 'primevue/tooltip'
 import Aura from '@primevue/themes/aura'
 import 'primeicons/primeicons.css'
 import ToastService from 'primevue/toastservice'
+import PluginStatus from "./PluginStatus.vue";
 export default (ctx: Context, config: any) => {
   // 此 Context 非彼 Context
   // 我们只是在前端同样实现了一套插件逻辑
@@ -24,4 +25,10 @@ export default (ctx: Context, config: any) => {
   ctx.app.use(ToastService)
 
   ctx.app.directive('tooltip', Tooltip)
+
+  ctx.slot({
+    type: 'plugin-details',
+    component: PluginStatus,
+    order: -500,
+  })
 }

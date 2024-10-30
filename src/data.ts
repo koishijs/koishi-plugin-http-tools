@@ -16,6 +16,18 @@ declare module 'cordis'{
         'http/data': HttpDataService
     }
 }
+export interface PluginRecord{
+  id: string
+  getCount: number
+  getDownloadSize: number
+  getUploadSize: number
+  postCount: number
+  postDownloadSize: number
+  postUploadSize: number
+  otherCount: number
+  otherDownloadSize: number
+  otherUploadSize: number
+}
 export class HttpDataService extends Service {
   entry: Entry<HttpSummary>
   constructor(ctx: Context, config: {entry: Entry<HttpSummary>}) {
@@ -45,6 +57,8 @@ export class HttpDataService extends Service {
   captureEnabled: boolean = true
 
   idCounter: number = 0
+
+  pluginRecords: Record<string, PluginRecord> = {}
 
   async loadSummary() {
     this.userSummary = await this.ctx.database.get('requests', {}, [
@@ -186,5 +200,35 @@ export class HttpDataService extends Service {
       } as any)
     } catch (e) {}
     return 0
+  }
+
+  updatePluginRecord(pluginId: string, record: Partial<PluginRecord>) {
+    let original = this.pluginRecords[pluginId]
+    if (!original) {
+      original = {
+        id: pluginId,
+        getCount: 0,
+        getDownloadSize: 0,
+        getUploadSize: 0,
+        postCount: 0,
+        postDownloadSize: 0,
+        postUploadSize: 0,
+        otherCount: 0,
+        otherDownloadSize: 0,
+        otherUploadSize: 0,
+      }
+    }
+
+    if (record.getCount) original.getCount += record.getCount
+    if (record.getDownloadSize) original.getDownloadSize += record.getDownloadSize
+    if (record.getUploadSize) original.getUploadSize += record.getUploadSize
+    if (record.postCount) original.postCount += record.postCount
+    if (record.postDownloadSize) original.postDownloadSize += record.postDownloadSize
+    if (record.postUploadSize) original.postUploadSize += record.postUploadSize
+    if (record.otherCount) original.otherCount += record.otherCount
+    if (record.otherDownloadSize) original.otherDownloadSize += record.otherDownloadSize
+    if (record.otherUploadSize) original.otherUploadSize += record.otherUploadSize
+
+    this.pluginRecords[pluginId] = original
   }
 }

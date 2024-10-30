@@ -1,10 +1,55 @@
 import { Context } from 'cordis'
 import { HTTP } from '@cordisjs/plugin-http'
 import { Symbols } from './symbols'
+import { PluginRecord } from './data'
 
 export namespace HttpToolCaptureModule{
+
+  export function createRecordFromSnapshot(url: string, init: RequestInit, config: HTTP.Config): Partial<PluginRecord> {
+    const record: Partial<PluginRecord> = {}
+    switch (init.method?.toLowerCase()) {
+      case 'get':
+        record.getCount = 1
+        record.getUploadSize = ('HTTP/1.1 GET ' + url + '\n' + JSON.stringify(config.headers)).length
+        record.getDownloadSize = 0
+        break
+      case 'post':
+        record.postCount = 1
+        record.postUploadSize = ('HTTP/1.1 GET ' + url + '\n' + JSON.stringify(config.headers)).length
+        record.postDownloadSize = 0
+        break
+      default:
+        record.otherCount = 1
+        record.otherCount = ('HTTP/1.1 GET ' + url + '\n' + JSON.stringify(config.headers)).length
+        record.otherCount = 0
+    }
+
+    return record
+  }
+
+  function createRecordFromResponse(method?: string, size?: number): Partial<PluginRecord> {
+    switch (method?.toLowerCase()) {
+      case 'get':
+        return { getDownloadSize: size }
+      case 'post':
+        return { postDownloadSize: size }
+      default:
+        return { otherDownloadSize: size }
+    }
+  }
   export function apply(ctx: Context) {
     ctx.on('http/fetch-init', function (this: HTTP, url: URL, init: RequestInit, config: HTTP.Config) {
+      const thatContext = this?.ctx;
+      (function () {
+        try {
+          if (thatContext == null) { return }
+          const locatedPath = ctx.loader.locate(thatContext)
+          if (locatedPath == null || locatedPath.length === 0) {
+            return
+          }
+          ctx['http/data'].updatePluginRecord(locatedPath[0], createRecordFromSnapshot(url.toString(), init, config))
+        } catch (e) {}
+      })()
       if (!ctx['http/data'].captureEnabled && !(Symbols.request in config)) { return }
       const stackTrace = new Error()
       const body = serializeBody(init)
@@ -23,6 +68,18 @@ export namespace HttpToolCaptureModule{
     ctx.on('http/after-fetch', (data) => {
       const endTime = Date.now()
       if (data.result) {
+        const thatContext = this?.ctx;
+        (function () {
+          try {
+            if (thatContext == null) { return }
+            const locatedPath = ctx.loader.locate(thatContext)
+            if (locatedPath == null || locatedPath.length === 0) {
+              return
+            }
+            ctx['http/data'].updatePluginRecord(locatedPath[0], createRecordFromResponse(data.init.method, data.result.length))
+          } catch (e) {}
+        })()
+
         ctx['http/data'].fillCapture(data.init, {
           responseCode: data.result.status,
           responseStatus: data.result.statusText,
